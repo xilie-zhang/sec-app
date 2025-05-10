@@ -16,7 +16,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Cars',
-        href: '/cars',
+        href: '/cars/index',
         icon: LayoutGrid,
     }
 ];

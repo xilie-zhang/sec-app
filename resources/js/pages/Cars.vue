@@ -2,27 +2,83 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { reactive } from 'vue'
-import { Head,router,useForm  } from '@inertiajs/vue3';
+import { Head,router,useForm, Link } from '@inertiajs/vue3';
 import PlaceholderPattern from '../components/PlaceholderPattern.vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Cars',
-        href: '/cars',
+        href: '/cars/index',
     },
 ];
 
-defineProps({ cars: Object })
+defineProps({ cars : Array });
 
 const form = useForm({
   name: null,
   color: null,
   price: null,
-})
+});
 
 function submit() {
   form.post('/cars')
+};
+	
+import DataTable from 'datatables.net-vue3';
+import DataTablesCore from 'datatables.net';
+DataTable.use(DataTablesCore);
+
+onMounted(function () {
+    const deleteButtons = document.querySelectorAll('.delete');
+
+    deleteButtons.forEach(button => {
+    button.addEventListener('click', async () => {
+        const postId = button.getAttribute('value');
+
+        try {
+        const response = await axios.get(`/cars/delete/${postId}`);
+
+        if (response.status === 204) {
+            console.log(`Post with ID ${postId} deleted successfully`);
+            // You might want to update the UI here, e.g., remove the post element
+        } else {
+            console.error(`Unexpected response status: ${response.status}`);
+        }
+        location.reload();
+        } catch (error) {
+        console.error(`Error deleting post`);
+        }
+    });
+    });
+
+});
+
+function drawEvent(){
+    const deleteButtons = document.querySelectorAll('.delete');
+
+    deleteButtons.forEach(button => {
+    button.addEventListener('click', async () => {
+        const postId = button.getAttribute('value');
+
+        try {
+        const response = await axios.get(`/cars/delete/${postId}`);
+
+        if (response.status === 204) {
+            console.log(`Post with ID ${postId} deleted successfully`);
+            // You might want to update the UI here, e.g., remove the post element
+        } else {
+            console.error(`Unexpected response status: ${response.status}`);
+        }
+        location.reload();
+        } catch (error) {
+        console.error(`Error deleting post`);
+        }
+    });
+    });
 }
+
 
 </script>
 
@@ -47,25 +103,24 @@ function submit() {
                     </form>
                 </div>
                 <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                    <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-                           <div> nome</div>
-                           <div> colore </div>
-                           <div> Prezzo </div>
-                        </div>
-                        <div class="grid auto-rows-min gap-4 md:grid-cols-3" v-for="car in cars" :key="car.id" :value="car.id">
-                           <div> {{ car.name }} </div>
-                           <div> {{ car.color }} </div>
-                           <div> {{ car.price }} € </div>
-                        </div>
-                    </div>
+                    <PlaceholderPattern />
                 </div>
                 <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                     <PlaceholderPattern />
                 </div>
             </div>
             <div class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
-                <PlaceholderPattern />
+                <DataTable :data="cars" class="display"  @draw="drawEvent">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>nome</th>
+                            <th>colore</th>
+                            <th>Prezzo</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                </DataTable>
             </div>
         </div>
     </AppLayout>

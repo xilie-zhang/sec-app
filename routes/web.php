@@ -20,6 +20,7 @@ Route::resource('pippo', CarController::class)->middleware(['auth', 'verified'])
 
 Route::get('cars/index', [CarController::class, 'index'])->middleware(['auth', 'verified'])->name('cars.index');
 Route::post('/cars', [CarController::class, 'store'])->middleware(['auth', 'verified'])->name('cars.store');
+Route::get('/cars/delete/{car}', [CarController::class, 'destroy'])->middleware(['auth', 'verified'])->name('cars.destroy');
 // Route::post('/cars',function(){
 //     return "postato";
 // });

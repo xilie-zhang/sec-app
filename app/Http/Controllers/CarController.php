@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\Request;
 
 class CarController extends Controller
 {
@@ -15,8 +16,14 @@ class CarController extends Controller
      */
     public function index()
     {
+        foreach (Car::all() as $car) {
+            $car = array_values($car->toArray());
+            $car[] = '<button class="delete" value="'.$car[0].'" >cancella</button>';
+            $cars[]= $car;
+        }
+        // dd($cars);
         return Inertia::render('Cars', [
-            'cars' => Car::all(),
+            'cars' => $cars,
           ]);
     }
 
@@ -71,8 +78,8 @@ class CarController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Car $car)
+    public function destroy( Car $car)
     {
-        //
+        $car->delete();
     }
 }

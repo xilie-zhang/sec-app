@@ -15,4 +15,9 @@ class Car extends Model
         'color',
         'price',
     ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at'
+    ];
 }
