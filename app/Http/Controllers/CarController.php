@@ -16,9 +16,10 @@ class CarController extends Controller
      */
     public function index()
     {
+        $cars = [];
         foreach (Car::all() as $car) {
             $car = array_values($car->toArray());
-            $car[] = '<button class="delete" value="'.$car[0].'" >cancella</button>';
+            $car[] = '<a href="/cars/'.$car[0].'/edit" class="edit">edit</button> <button class="delete" value="'.$car[0].'" >cancella</button>';
             $cars[]= $car;
         }
         // dd($cars);
@@ -62,8 +63,9 @@ class CarController extends Controller
      */
     public function edit(Car $car)
     {
-        return "hello from controller";
-        //
+        return Inertia::render('Carshow', [
+            'car' => $car,
+          ]);
     }
 
     /**
@@ -71,8 +73,12 @@ class CarController extends Controller
      */
     public function update(UpdateCarRequest $request, Car $car)
     {
-        return "hello from controller";
-        //
+         $car->update($request->validate([
+                'name' => ['required', 'max:50'],
+                'color' => ['required', 'max:50'],
+                'price' => ['required', 'decimal:2']
+        ]));
+          return to_route('cars.index');
     }
 
     /**
